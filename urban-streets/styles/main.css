@@ -1,0 +1,1269 @@
+/* URBAN STREETS - Main Stylesheet */
+
+:root {
+    --primary-color: #00ffff;
+    --secondary-color: #ff00ff;
+    --accent-color: #ffff00;
+    --danger-color: #ff4444;
+    --success-color: #00ff88;
+    --dark-bg: #0a0a0f;
+    --panel-bg: rgba(20, 20, 30, 0.95);
+    --glass-bg: rgba(10, 10, 20, 0.85);
+    --neon-glow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-main);
+    background: var(--dark-bg);
+    color: white;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* ==================== MAIN MENU ==================== */
+
+#main-menu {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
+    overflow: hidden;
+}
+
+.menu-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+    animation: menuBgPulse 4s ease-in-out infinite;
+}
+
+@keyframes menuBgPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.menu-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+}
+
+.game-title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--primary-color);
+    animation: titleGlow 2s ease-in-out infinite;
+    line-height: 1.1;
+}
+
+.game-title .highlight {
+    color: var(--primary-color);
+    display: block;
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--primary-color); }
+    50% { text-shadow: 0 0 30px var(--primary-color), 0 0 60px var(--primary-color), 0 0 80px var(--primary-color); }
+}
+
+.tagline {
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    letter-spacing: 0.5em;
+    color: #888;
+    margin-bottom: 3rem;
+    margin-top: 1rem;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 280px;
+}
+
+.menu-btn {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+    border: 2px solid var(--primary-color);
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+}
+
+.menu-btn:hover {
+    background: var(--primary-color);
+    color: var(--dark-bg);
+    box-shadow: var(--neon-glow);
+    transform: scale(1.05);
+}
+
+/* ==================== CITY HUB ==================== */
+
+#city-screen {
+    position: relative;
+}
+
+#city-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#city-hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+}
+
+.hud-money, .hud-xp, .hud-car-name {
+    background: var(--glass-bg);
+    padding: 10px 20px;
+    border-left: 3px solid var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+    backdrop-filter: blur(10px);
+}
+
+.hud-money {
+    color: var(--success-color);
+}
+
+.hud-xp {
+    color: var(--accent-color);
+}
+
+#interaction-prompt {
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+}
+
+.prompt-box {
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-color);
+    padding: 15px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    animation: promptPulse 1s ease-in-out infinite;
+}
+
+@keyframes promptPulse {
+    0%, 100% { box-shadow: 0 0 10px var(--primary-color); }
+    50% { box-shadow: 0 0 30px var(--primary-color); }
+}
+
+.racer-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.prompt-action {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.city-btn {
+    position: absolute;
+    background: var(--glass-bg);
+    border: 2px solid var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.city-btn:hover {
+    background: var(--primary-color);
+    color: var(--dark-bg);
+}
+
+#btn-city-garage { bottom: 20px; left: 20px; }
+#btn-city-shop { bottom: 20px; left: 180px; }
+#btn-city-map { bottom: 20px; right: 180px; }
+#btn-city-menu { bottom: 20px; right: 20px; }
+
+/* ==================== DIALOGUE SCREEN ==================== */
+
+#dialogue-screen {
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.dialogue-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-color);
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    backdrop-filter: blur(20px);
+}
+
+.dialogue-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.racer-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+}
+
+.racer-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.difficulty {
+    color: var(--accent-color);
+    letter-spacing: 0.2em;
+}
+
+.dialogue-content {
+    margin-bottom: 1.5rem;
+    min-height: 80px;
+}
+
+#dialogue-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.dialogue-rewards {
+    background: rgba(0, 255, 255, 0.1);
+    padding: 1rem;
+    border-left: 3px solid var(--success-color);
+    margin-bottom: 1.5rem;
+}
+
+.reward-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.reward-item .value {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.dialogue-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.action-btn.primary {
+    background: var(--primary-color);
+    color: var(--dark-bg);
+}
+
+.action-btn.secondary {
+    background: transparent;
+    border: 2px solid #666;
+    color: white;
+}
+
+.action-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+/* ==================== TRANSITION SCREEN ==================== */
+
+#transition-screen {
+    justify-content: center;
+    align-items: center;
+    background: black;
+}
+
+.transition-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: black;
+    animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; }
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+#transition-text {
+    color: var(--primary-color);
+    letter-spacing: 0.2em;
+}
+
+/* ==================== RACE SCREEN ==================== */
+
+#race-screen {
+    position: relative;
+}
+
+#race-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#race-hud {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.hud-top {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    background: var(--glass-bg);
+    padding: 15px 30px;
+    backdrop-filter: blur(10px);
+}
+
+.position-display, .lap-display, .time-display {
+    text-align: center;
+}
+
+.hud-top .label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.hud-top .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.hud-bottom {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.speed-display {
+    text-align: right;
+}
+
+.speed-display .value {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+
+.speed-display .label {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.nitro-bar {
+    width: 200px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--secondary-color);
+    overflow: hidden;
+}
+
+.nitro-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color), #ff88ff);
+    width: 100%;
+    transition: width 0.1s ease;
+}
+
+#countdown-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.countdown-number {
+    font-size: 10rem;
+    font-weight: 900;
+    color: var(--accent-color);
+    text-shadow: 0 0 50px var(--accent-color);
+    animation: countdownPop 0.8s ease forwards;
+}
+
+@keyframes countdownPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+.pause-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--panel-bg);
+    padding: 2rem;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+}
+
+.pause-menu h2 {
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.pause-btn {
+    display: block;
+    width: 200px;
+    margin: 0.5rem auto;
+    padding: 1rem;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pause-btn:hover {
+    background: var(--primary-color);
+    color: var(--dark-bg);
+}
+
+#mobile-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 20px;
+    pointer-events: auto;
+}
+
+.steering-controls, .pedal-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.touch-btn {
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.1s ease;
+}
+
+.touch-btn:active {
+    background: var(--primary-color);
+    transform: scale(0.95);
+}
+
+.touch-btn.pedal {
+    border-radius: 10px;
+}
+
+.touch-btn.nitro {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 0, 255, 0.3);
+    border-color: var(--secondary-color);
+}
+
+/* ==================== RESULTS SCREEN ==================== */
+
+#results-screen {
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.results-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-color);
+    padding: 3rem;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    max-width: 500px;
+    width: 90%;
+}
+
+#results-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.results-position {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--accent-color);
+}
+
+.results-stats {
+    margin-bottom: 2rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-row.total {
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-top: 2px solid var(--primary-color);
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+
+.stat-row .value.positive {
+    color: var(--success-color);
+}
+
+/* ==================== GARAGE SCREEN ==================== */
+
+#garage-screen {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+.garage-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-color);
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    max-width: 800px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.garage-car-preview {
+    width: 100%;
+    height: 250px;
+    background: rgba(0, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+#garage-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.garage-info {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+#garage-car-name {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.car-price {
+    font-size: 1.3rem;
+    color: var(--success-color);
+}
+
+.car-owned {
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+.garage-stats {
+    margin-bottom: 1.5rem;
+}
+
+.stat-bar {
+    margin-bottom: 0.8rem;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+}
+
+.bar-container {
+    height: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: width 0.3s ease;
+}
+
+.garage-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.car-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.selector-btn {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.selector-btn:hover {
+    background: var(--primary-color);
+    color: var(--dark-bg);
+}
+
+.back-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    color: white;
+}
+
+/* Upgrades Panel */
+
+.upgrades-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--panel-bg);
+    border: 2px solid var(--secondary-color);
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.upgrade-list {
+    margin: 1.5rem 0;
+}
+
+.upgrade-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upgrade-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.upgrade-level {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+}
+
+.upgrade-cost {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+}
+
+.upgrade-btn {
+    background: var(--success-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    color: var(--dark-bg);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upgrade-btn:hover {
+    transform: scale(1.05);
+}
+
+.upgrade-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==================== SHOP SCREEN ==================== */
+
+#shop-screen {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+.shop-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--success-color);
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.shop-panel h2 {
+    text-align: center;
+    color: var(--success-color);
+    margin-bottom: 1rem;
+}
+
+.shop-money {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--success-color);
+    margin-bottom: 1.5rem;
+}
+
+.shop-car-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.shop-car-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.shop-car-item:hover {
+    border-color: var(--success-color);
+    transform: translateY(-5px);
+}
+
+.shop-car-item h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.shop-car-stats {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+}
+
+.shop-car-price {
+    color: var(--success-color);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.shop-car-item button {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--success-color);
+    border: none;
+    color: var(--dark-bg);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.shop-car-item button:hover {
+    transform: scale(1.05);
+}
+
+.shop-car-item button:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==================== MAP SCREEN ==================== */
+
+#map-screen {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+.map-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--accent-color);
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    max-width: 800px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.map-panel h2 {
+    text-align: center;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+}
+
+.gang-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.gang-title {
+    color: white;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gang-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.gang-color.phantom { background: #aa00ff; }
+.gang-color.viper { background: #ff4400; }
+.gang-color.reaper { background: #00ff88; }
+.gang-color.final { background: #ff0000; }
+
+.race-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    gap: 0.5rem;
+}
+
+.race-node {
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.race-node:hover {
+    transform: scale(1.1);
+}
+
+.race-node.completed {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: var(--dark-bg);
+}
+
+.race-node.locked {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.race-node.boss {
+    border-width: 3px;
+    font-size: 1.5rem;
+}
+
+/* ==================== SETTINGS SCREEN ==================== */
+
+#settings-screen {
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.settings-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-color);
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    max-width: 500px;
+    width: 90%;
+}
+
+.settings-panel h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.settings-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-section h3 {
+    color: #888;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.setting-row label {
+    color: white;
+}
+
+.setting-row select,
+.setting-row input[type="range"] {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem;
+}
+
+.setting-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+/* ==================== CREDITS SCREEN ==================== */
+
+#credits-screen {
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.credits-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-color);
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.credits-panel h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.credits-content h3 {
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.credits-content h4 {
+    color: #888;
+    margin: 1rem 0 0.5rem;
+}
+
+/* ==================== BOSS INTRO SCREEN ==================== */
+
+#boss-intro-screen {
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.95);
+}
+
+.boss-intro-panel {
+    text-align: center;
+    padding: 3rem;
+}
+
+.boss-title {
+    color: var(--danger-color);
+    letter-spacing: 0.5em;
+    margin: 1rem 0;
+}
+
+#boss-name {
+    font-size: 3rem;
+    color: var(--danger-color);
+    text-shadow: 0 0 30px var(--danger-color);
+    margin: 1rem 0;
+}
+
+#boss-subtitle {
+    color: #888;
+    letter-spacing: 0.3em;
+    margin-bottom: 2rem;
+}
+
+.boss-stats {
+    margin-bottom: 2rem;
+}
+
+.boss-stat {
+    color: var(--accent-color);
+    margin: 0.5rem 0;
+    letter-spacing: 0.2em;
+}
+
+.boss-quote {
+    font-style: italic;
+    color: #888;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+}
+
+/* ==================== VICTORY SCREEN ==================== */
+
+#victory-screen {
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+.victory-panel {
+    text-align: center;
+    padding: 3rem;
+}
+
+.victory-title {
+    color: var(--accent-color);
+    letter-spacing: 0.5em;
+    margin: 1rem 0;
+}
+
+.victory-panel h1 {
+    font-size: 3rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 30px var(--primary-color);
+}
+
+.champion {
+    color: var(--accent-color);
+    font-size: 2rem;
+    margin: 1rem 0;
+}
+
+.city-yours {
+    color: #888;
+    letter-spacing: 0.3em;
+    margin-bottom: 2rem;
+}
+
+.victory-stats {
+    margin: 2rem 0;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+
+.hidden {
+    display: none !important;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+@media (max-width: 768px) {
+    .menu-buttons {
+        min-width: 200px;
+    }
+    
+    .menu-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .dialogue-panel,
+    .garage-panel,
+    .shop-panel,
+    .map-panel,
+    .settings-panel,
+    .credits-panel {
+        padding: 1rem;
+        width: 95%;
+    }
+    
+    .hud-top {
+        gap: 15px;
+        padding: 10px 15px;
+    }
+    
+    .hud-top .value {
+        font-size: 1.2rem;
+    }
+    
+    .speed-display .value {
+        font-size: 2rem;
+    }
+    
+    .nitro-bar {
+        width: 150px;
+    }
+    
+    #mobile-controls {
+        display: flex;
+    }
+    
+    .touch-btn {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .city-btn {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+    
+    #btn-city-shop, #btn-city-map {
+        display: none;
+    }
+}
+
+@media (max-height: 500px) {
+    .game-title {
+        font-size: 2.5rem;
+    }
+    
+    .tagline {
+        margin-bottom: 1rem;
+    }
+    
+    .menu-btn {
+        padding: 0.6rem 1rem;
+    }
+}
+
+/* Landscape orientation for mobile */
+@media (orientation: landscape) and (max-height: 500px) {
+    .menu-content {
+        padding: 1rem;
+    }
+    
+    .game-title {
+        font-size: 2rem;
+    }
+}
