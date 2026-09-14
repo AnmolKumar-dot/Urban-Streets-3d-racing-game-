@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>URBAN STREETS - Street Racing Evolved</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <div class="menu-bg"></div>
+            <div class="menu-content">
+                <h1 class="game-title">URBAN<br><span class="highlight">STREETS</span></h1>
+                <p class="tagline">STREET RACING EVOLVED</p>
+                <div class="menu-buttons">
+                    <button id="btn-continue" class="menu-btn">CONTINUE</button>
+                    <button id="btn-new-game" class="menu-btn">NEW GAME</button>
+                    <button id="btn-garage-menu" class="menu-btn">GARAGE</button>
+                    <button id="btn-map-menu" class="menu-btn">CAMPAIGN</button>
+                    <button id="btn-shop-menu" class="menu-btn">SHOP</button>
+                    <button id="btn-settings-menu" class="menu-btn">SETTINGS</button>
+                    <button id="btn-credits-menu" class="menu-btn">CREDITS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- City Hub -->
+        <div id="city-screen" class="screen">
+            <canvas id="city-canvas"></canvas>
+            <div id="city-hud">
+                <div class="hud-money">$<span id="city-money">0</span></div>
+                <div class="hud-xp">XP <span id="city-xp">0</span></div>
+                <div class="hud-car-name" id="city-car-name">Street Fox</div>
+            </div>
+            <div id="interaction-prompt" class="hidden">
+                <div class="prompt-box">
+                    <span class="racer-name" id="prompt-racer-name">RACER</span>
+                    <span class="prompt-action">[E] TALK</span>
+                </div>
+            </div>
+            <button id="btn-city-garage" class="city-btn">🏠 GARAGE</button>
+            <button id="btn-city-shop" class="city-btn">🛒 SHOP</button>
+            <button id="btn-city-map" class="city-btn">📍 MAP</button>
+            <button id="btn-city-menu" class="city-btn">⚙️ MENU</button>
+        </div>
+
+        <!-- Dialogue Screen -->
+        <div id="dialogue-screen" class="screen">
+            <div class="dialogue-panel">
+                <div class="dialogue-header">
+                    <div class="racer-avatar" id="dialogue-avatar"></div>
+                    <div class="racer-info">
+                        <h2 id="dialogue-racer-name">RACER NAME</h2>
+                        <p id="dialogue-racer-title">Street Phantom</p>
+                        <div class="difficulty" id="dialogue-difficulty">★★☆☆☆</div>
+                    </div>
+                </div>
+                <div class="dialogue-content">
+                    <p id="dialogue-text">Dialogue text goes here...</p>
+                </div>
+                <div class="dialogue-rewards">
+                    <div class="reward-item">
+                        <span class="label">REWARD:</span>
+                        <span class="value" id="dialogue-reward">$1,500</span>
+                    </div>
+                </div>
+                <div class="dialogue-actions">
+                    <button id="btn-race-challenge" class="action-btn primary">RACE</button>
+                    <button id="btn-dialogue-cancel" class="action-btn secondary">CANCEL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transition Screen -->
+        <div id="transition-screen" class="screen">
+            <div class="transition-overlay"></div>
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p id="transition-text">LOADING TRACK...</p>
+            </div>
+        </div>
+
+        <!-- Race Screen -->
+        <div id="race-screen" class="screen">
+            <canvas id="race-canvas"></canvas>
+            <div id="race-hud">
+                <div class="hud-top">
+                    <div class="position-display">
+                        <span class="label">POSITION</span>
+                        <span class="value"><span id="hud-position">1</span> / <span id="hud-total">4</span></span>
+                    </div>
+                    <div class="lap-display">
+                        <span class="label">LAP</span>
+                        <span class="value"><span id="hud-lap">1</span> / <span id="hud-laps">3</span></span>
+                    </div>
+                    <div class="time-display">
+                        <span class="label">TIME</span>
+                        <span class="value" id="hud-time">00:00.00</span>
+                    </div>
+                </div>
+                <div class="hud-bottom">
+                    <div class="speed-display">
+                        <span class="value" id="hud-speed">0</span>
+                        <span class="label">KM/H</span>
+                    </div>
+                    <div class="nitro-display">
+                        <div class="nitro-bar">
+                            <div class="nitro-fill" id="hud-nitro-fill"></div>
+                        </div>
+                        <span class="label">NITRO</span>
+                    </div>
+                </div>
+            </div>
+            <div id="countdown-overlay" class="hidden">
+                <div class="countdown-number" id="countdown-number">3</div>
+            </div>
+            <div id="race-pause-menu" class="pause-menu hidden">
+                <h2>RACE PAUSED</h2>
+                <button id="btn-resume-race" class="pause-btn">RESUME</button>
+                <button id="btn-restart-race" class="pause-btn">RESTART</button>
+                <button id="btn-quit-race" class="pause-btn">QUIT RACE</button>
+            </div>
+            <div id="mobile-controls" class="hidden">
+                <div class="steering-controls">
+                    <button id="touch-left" class="touch-btn">◄</button>
+                    <button id="touch-right" class="touch-btn">►</button>
+                </div>
+                <div class="pedal-controls">
+                    <button id="touch-brake" class="touch-btn pedal">BRAKE</button>
+                    <button id="touch-gas" class="touch-btn pedal">GAS</button>
+                </div>
+                <button id="touch-nitro" class="touch-btn nitro">NITRO</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="results-panel">
+                <h1 id="results-title">RACE COMPLETE</h1>
+                <div class="results-position" id="results-position">🏆 1ST PLACE</div>
+                <div class="results-stats">
+                    <div class="stat-row">
+                        <span class="label">TIME</span>
+                        <span class="value" id="results-time">01:32.48</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">REWARD</span>
+                        <span class="value positive" id="results-reward">+$3,500</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">BONUS</span>
+                        <span class="value positive" id="results-bonus">+$750</span>
+                    </div>
+                    <div class="stat-row total">
+                        <span class="label">TOTAL</span>
+                        <span class="value positive" id="results-total">+$4,250</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">XP</span>
+                        <span class="value" id="results-xp">+850</span>
+                    </div>
+                </div>
+                <button id="btn-continue-results" class="action-btn primary">CONTINUE</button>
+            </div>
+        </div>
+
+        <!-- Garage Screen -->
+        <div id="garage-screen" class="screen">
+            <div class="garage-panel">
+                <div class="garage-car-preview">
+                    <canvas id="garage-canvas"></canvas>
+                </div>
+                <div class="garage-info">
+                    <h2 id="garage-car-name">NIGHTFALL GT</h2>
+                    <div class="car-price" id="garage-car-price">$45,000</div>
+                    <div class="car-owned" id="garage-car-owned">OWNED</div>
+                </div>
+                <div class="garage-stats">
+                    <div class="stat-bar">
+                        <span class="stat-label">TOP SPEED</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="stat-speed"></div>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <span class="stat-label">ACCELERATION</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="stat-acceleration"></div>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <span class="stat-label">HANDLING</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="stat-handling"></div>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <span class="stat-label">BRAKING</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="stat-braking"></div>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <span class="stat-label">NITRO</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="stat-nitro"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="garage-actions">
+                    <button id="btn-equip-car" class="action-btn primary">EQUIP</button>
+                    <button id="btn-buy-car" class="action-btn secondary">BUY</button>
+                </div>
+                <div class="car-selector">
+                    <button id="btn-prev-car" class="selector-btn">◄</button>
+                    <span id="car-selector-index">1 / 10</span>
+                    <button id="btn-next-car" class="selector-btn">►</button>
+                </div>
+                <button id="btn-back-garage" class="back-btn">← BACK</button>
+            </div>
+            <!-- Upgrades Panel -->
+            <div id="upgrades-panel" class="upgrades-panel hidden">
+                <h3>UPGRADES</h3>
+                <div class="upgrade-list">
+                    <div class="upgrade-item">
+                        <div class="upgrade-info">
+                            <span class="upgrade-name">ENGINE</span>
+                            <span class="upgrade-level" id="upgrade-engine-lvl">LV.1</span>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="upgrade-engine-cost">$5,000</span>
+                            <button class="upgrade-btn" data-upgrade="engine">UPGRADE</button>
+                        </div>
+                    </div>
+                    <div class="upgrade-item">
+                        <div class="upgrade-info">
+                            <span class="upgrade-name">TRANSMISSION</span>
+                            <span class="upgrade-level" id="upgrade-transmission-lvl">LV.1</span>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="upgrade-transmission-cost">$4,000</span>
+                            <button class="upgrade-btn" data-upgrade="transmission">UPGRADE</button>
+                        </div>
+                    </div>
+                    <div class="upgrade-item">
+                        <div class="upgrade-info">
+                            <span class="upgrade-name">TIRES</span>
+                            <span class="upgrade-level" id="upgrade-tires-lvl">LV.1</span>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="upgrade-tires-cost">$3,500</span>
+                            <button class="upgrade-btn" data-upgrade="tires">UPGRADE</button>
+                        </div>
+                    </div>
+                    <div class="upgrade-item">
+                        <div class="upgrade-info">
+                            <span class="upgrade-name">BRAKES</span>
+                            <span class="upgrade-level" id="upgrade-brakes-lvl">LV.1</span>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="upgrade-brakes-cost">$3,000</span>
+                            <button class="upgrade-btn" data-upgrade="brakes">UPGRADE</button>
+                        </div>
+                    </div>
+                    <div class="upgrade-item">
+                        <div class="upgrade-info">
+                            <span class="upgrade-name">NITRO</span>
+                            <span class="upgrade-level" id="upgrade-nitro-lvl">LV.1</span>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="upgrade-nitro-cost">$6,000</span>
+                            <button class="upgrade-btn" data-upgrade="nitro">UPGRADE</button>
+                        </div>
+                    </div>
+                    <div class="upgrade-item">
+                        <div class="upgrade-info">
+                            <span class="upgrade-name">ECU</span>
+                            <span class="upgrade-level" id="upgrade-ecu-lvl">LV.1</span>
+                        </div>
+                        <div class="upgrade-cost">
+                            <span id="upgrade-ecu-cost">$7,000</span>
+                            <button class="upgrade-btn" data-upgrade="ecu">UPGRADE</button>
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-close-upgrades" class="back-btn">CLOSE</button>
+            </div>
+        </div>
+
+        <!-- Shop Screen -->
+        <div id="shop-screen" class="screen">
+            <div class="shop-panel">
+                <h2>CAR DEALERSHIP</h2>
+                <div class="shop-money">$<span id="shop-money">0</span></div>
+                <div class="shop-car-list" id="shop-car-list">
+                    <!-- Cars populated by JS -->
+                </div>
+                <button id="btn-back-shop" class="back-btn">← BACK</button>
+            </div>
+        </div>
+
+        <!-- Campaign Map Screen -->
+        <div id="map-screen" class="screen">
+            <div class="map-panel">
+                <h2>CAMPAIGN MAP</h2>
+                <div class="gang-section">
+                    <h3 class="gang-title">STREET PHANTOMS</h3>
+                    <div class="gang-color phantom"></div>
+                    <div class="race-grid" id="gang1-races">
+                        <!-- Races populated by JS -->
+                    </div>
+                </div>
+                <div class="gang-section">
+                    <h3 class="gang-title">IRON VIPERS</h3>
+                    <div class="gang-color viper"></div>
+                    <div class="race-grid" id="gang2-races">
+                        <!-- Races populated by JS -->
+                    </div>
+                </div>
+                <div class="gang-section">
+                    <h3 class="gang-title">NIGHT REAPERS</h3>
+                    <div class="gang-color reaper"></div>
+                    <div class="race-grid" id="gang3-races">
+                        <!-- Races populated by JS -->
+                    </div>
+                </div>
+                <div class="gang-section final">
+                    <h3 class="gang-title">FINAL BOSSES</h3>
+                    <div class="gang-color final"></div>
+                    <div class="race-grid" id="final-races">
+                        <!-- Races populated by JS -->
+                    </div>
+                </div>
+                <button id="btn-back-map" class="back-btn">← BACK</button>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="screen">
+            <div class="settings-panel">
+                <h2>SETTINGS</h2>
+                
+                <div class="settings-section">
+                    <h3>GRAPHICS</h3>
+                    <div class="setting-row">
+                        <label>Quality</label>
+                        <select id="setting-quality">
+                            <option value="low">LOW</option>
+                            <option value="medium" selected>MEDIUM</option>
+                            <option value="high">HIGH</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label>Effects</label>
+                        <input type="checkbox" id="setting-effects" checked>
+                    </div>
+                    <div class="setting-row">
+                        <label>Particles</label>
+                        <input type="checkbox" id="setting-particles" checked>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>AUDIO</h3>
+                    <div class="setting-row">
+                        <label>Master Volume</label>
+                        <input type="range" id="setting-master-volume" min="0" max="100" value="80">
+                    </div>
+                    <div class="setting-row">
+                        <label>Music Volume</label>
+                        <input type="range" id="setting-music-volume" min="0" max="100" value="60">
+                    </div>
+                    <div class="setting-row">
+                        <label>SFX Volume</label>
+                        <input type="range" id="setting-sfx-volume" min="0" max="100" value="80">
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>CONTROLS</h3>
+                    <div class="setting-row">
+                        <label>Touch Controls</label>
+                        <input type="checkbox" id="setting-touch-controls" checked>
+                    </div>
+                </div>
+
+                <button id="btn-save-settings" class="action-btn primary">SAVE SETTINGS</button>
+                <button id="btn-back-settings" class="back-btn">← BACK</button>
+            </div>
+        </div>
+
+        <!-- Credits Screen -->
+        <div id="credits-screen" class="screen">
+            <div class="credits-panel">
+                <h2>CREDITS</h2>
+                <div class="credits-content">
+                    <h3>URBAN STREETS</h3>
+                    <p>Street Racing Evolved</p>
+                    <br>
+                    <p>Created with HTML5, CSS3 & JavaScript</p>
+                    <br>
+                    <h4>GAME DESIGN</h4>
+                    <p>Arcade Street Racing Experience</p>
+                    <br>
+                    <h4>FEATURES</h4>
+                    <p>• 38 Unique Races</p>
+                    <p>• 3 Racing Gangs</p>
+                    <p>• 10+ Vehicles</p>
+                    <p>• Full Upgrade System</p>
+                    <p>• City Hub Exploration</p>
+                    <p>• Boss Battles</p>
+                    <br>
+                    <p>© 2024 Urban Streets</p>
+                </div>
+                <button id="btn-back-credits" class="back-btn">← BACK</button>
+            </div>
+        </div>
+
+        <!-- Boss Intro Screen -->
+        <div id="boss-intro-screen" class="screen">
+            <div class="boss-intro-panel">
+                <div class="boss-title">━━━━━━━━━━━━━━━━━━━━</div>
+                <h1 id="boss-name">THE REAPER</h1>
+                <p id="boss-subtitle">FINAL STREET KING</p>
+                <div class="boss-stats">
+                    <div class="boss-stat">SPEED ★★★★★</div>
+                    <div class="boss-stat">HANDLING ★★★★★</div>
+                    <div class="boss-stat">SKILL ★★★★★</div>
+                </div>
+                <p id="boss-quote" class="boss-quote">"These streets belong to me."</p>
+                <div class="boss-title">━━━━━━━━━━━━━━━━━━━━</div>
+                <button id="btn-boss-race" class="action-btn primary">RACE</button>
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory-screen" class="screen">
+            <div class="victory-panel">
+                <div class="victory-title">━━━━━━━━━━━━━━━━━━━━</div>
+                <h1>URBAN STREETS</h1>
+                <h2 class="champion">CHAMPION</h2>
+                <p class="city-yours">THE CITY IS YOURS</p>
+                <div class="victory-title">━━━━━━━━━━━━━━━━━━━━</div>
+                <div class="victory-stats">
+                    <div class="stat-row">
+                        <span class="label">CAMPAIGN COMPLETE</span>
+                        <span class="value">38 / 38 RACES</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">FINAL BOSS DEFEATED</span>
+                        <span class="value">✓</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">TOTAL EARNINGS</span>
+                        <span class="value" id="victory-earnings">$1,250,000</span>
+                    </div>
+                </div>
+                <button id="btn-free-drive" class="action-btn primary">FREE DRIVE</button>
+                <button id="btn-new-game-plus" class="action-btn secondary">NEW GAME+</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/game-data.js"></script>
+    <script src="src/audio.js"></script>
+    <script src="src/save-system.js"></script>
+    <script src="src/player.js"></script>
+    <script src="src/cars.js"></script>
+    <script src="src/tracks.js"></script>
+    <script src="src/ai.js"></script>
+    <script src="src/racing.js"></script>
+    <script src="src/city.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/gangs.js"></script>
+    <script src="src/shop.js"></script>
+    <script src="src/garage.js"></script>
+    <script src="src/settings.js"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>
